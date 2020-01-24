@@ -2,32 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default class extends React.Component {
+    static defaultProps = {
+        onChange: function (cnt) {
+            console.log(cnt)
+        }
+    };
     static propTypes = {
         min: PropTypes.number.isRequired,
-        max: PropTypes.number.isRequired
+        max: PropTypes.number.isRequired,
+        cnt: PropTypes.number.isRequired,
+        onChange: PropTypes.func
     };
-    /*
-    Антипаттерн
-    static getDerivedStateFromProps(props, state) {
-        state.cnt = Math.min(Math.max(state.cnt, props.min), props.max);
-        state.inputValue = state.cnt;
-        console.log(props);
-        return state;
-    }
-    */
+
     state = {
         cnt: this.props.min,
-        inputValue: this.props.min
+        inputValue: this.props.cnt
     };
-    plus = () => this.set(this.state.cnt + 1);
-    minus = () => this.set(this.state.cnt - 1);
+    plus = () => this.set(this.props.cnt + 1);
+    minus = () => this.set(this.props.cnt - 1);
     set(newCnt) {
         let cnt = Math.min(Math.max(newCnt, this.props.min), this.props.max);
         this.setState({
-            cnt,
             inputValue: cnt
         });
-        console.log(cnt);
+        // Как то сказать родителю, что cnt обновился
+        this.props.onChange(cnt);
     }
     setValue(newStr) {
         this.setState({ inputValue: newStr});
@@ -41,14 +40,11 @@ export default class extends React.Component {
             this.applyValue();
         }
     };
-    test() {
-        alert('test');
-    }
     render() {
         return (
             <div>
-                {this.state.cnt}<br/>
-                {this.state.inputValue}<br/>
+                {/*{this.state.cnt}<br/>*/}
+                {/*{this.state.inputValue}<br/>*/}
                 <button onClick={this.minus}>-</button>
                 <input value={this.state.inputValue}
                        onChange={(e) => this.setValue(e.target.value)}
